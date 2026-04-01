@@ -108,7 +108,7 @@ export default function Home() {
                 Car Color Visualizer
               </h1>
               <p className="text-[10px] text-zinc-500 tracking-widest uppercase">
-                Powered by Google AI
+                AI Color Studio
               </p>
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-zinc-800/60 mt-20 py-8 text-center text-zinc-600 text-xs tracking-widest uppercase">
-        <p>Car Color Visualizer &nbsp;•&nbsp; Powered by Google AI</p>
+        <p>Car Color Visualizer</p>
       </footer>
     </div>
   );
