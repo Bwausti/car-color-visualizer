@@ -13,8 +13,8 @@ interface VisualizeResult {
 
 export default function Home() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [selectedColorName, setSelectedColorName] = useState("Midnight Black");
-  const [selectedColorHex, setSelectedColorHex] = useState("#0a0a0a");
+  const [selectedColorName, setSelectedColorName] = useState("Custom #3b82f6");
+  const [selectedColorHex, setSelectedColorHex] = useState("#3b82f6");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<VisualizeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -77,7 +77,7 @@ export default function Home() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // clipboard failed, just show the URL
+      // clipboard failed
     }
   };
 
@@ -91,172 +91,130 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      {/* Header */}
-      <header className="border-b border-zinc-800/60 sticky top-0 z-10 bg-zinc-950/90 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Minimal car silhouette icon */}
-            <svg
-              className="w-7 h-7 text-zinc-300"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
-            </svg>
-            <div>
-              <h1 className="font-semibold text-zinc-100 text-sm tracking-wide">
-                Car Color Visualizer
-              </h1>
-              <p className="text-[10px] text-zinc-500 tracking-widest uppercase">
-                AI Color Studio
-              </p>
+      {/* Subtle gradient overlay */}
+      <div className="fixed inset-0 bg-gradient-to-b from-zinc-900/50 via-transparent to-zinc-900/80 pointer-events-none" />
+
+      <div className="relative">
+        {/* Header — minimal */}
+        <header className="border-b border-zinc-800/40">
+          <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-1.5 h-5 bg-gradient-to-b from-white to-zinc-500 rounded-full" />
+              <span className="text-sm font-semibold text-zinc-200 tracking-wide">ColorShift</span>
             </div>
           </div>
-          <a
-            href="/embed"
-            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors tracking-wide"
-          >
-            Embed
-          </a>
-        </div>
-      </header>
+        </header>
 
-      <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
-        {/* Hero */}
-        <div className="text-center py-8">
-          <p className="text-xs text-zinc-500 uppercase tracking-[0.3em] mb-4 font-medium">
-            AI Color Studio
-          </p>
-          <h2 className="text-5xl sm:text-6xl font-bold text-zinc-100 mb-4 tracking-tight">
-            See Your Car in{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-300 to-zinc-500">
-              Any Color
-            </span>
-          </h2>
-          <p className="text-zinc-500 text-lg max-w-xl mx-auto leading-relaxed">
-            Upload a photo. Choose a color. AI handles the rest.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Left: Upload */}
-          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-6 space-y-4">
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-semibold">
-                Step 01
-              </span>
-              <div className="flex-1 h-px bg-zinc-800" />
-            </div>
-            <h3 className="font-semibold text-zinc-200 text-base">Upload Car Photo</h3>
-            <ImageUploader
-              onImageSelect={handleImageSelect}
-              currentImage={uploadedImage}
-            />
+        <main className="max-w-6xl mx-auto px-6 py-16">
+          {/* Hero — tight and confident */}
+          <div className="text-center mb-16">
+            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-4">
+              <span className="text-white">Reimagine</span>{" "}
+              <span className="text-zinc-500">your ride</span>
+            </h1>
+            <p className="text-zinc-500 text-base max-w-md mx-auto">
+              Upload a photo. Pick a color. AI does the rest.
+            </p>
           </div>
 
-          {/* Right: Color picker */}
-          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-6 space-y-4">
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-semibold">
-                Step 02
-              </span>
-              <div className="flex-1 h-px bg-zinc-800" />
+          {/* Two-column layout */}
+          <div className="grid lg:grid-cols-5 gap-8 mb-12">
+            {/* Left: Upload — takes more space */}
+            <div className="lg:col-span-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs text-zinc-500 uppercase tracking-widest font-medium">Your Vehicle</h3>
+                {uploadedImage && (
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full border border-zinc-700"
+                      style={{ backgroundColor: selectedColorHex }}
+                    />
+                    <span className="text-xs text-zinc-500">{selectedColorName}</span>
+                  </div>
+                )}
+              </div>
+              <ImageUploader
+                onImageSelect={handleImageSelect}
+                currentImage={uploadedImage}
+              />
             </div>
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-zinc-200 text-base">Choose a Color</h3>
-              {/* Selected color preview inline */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-5 h-5 rounded-full shadow-md border border-white/10"
-                  style={{ backgroundColor: selectedColorHex }}
+
+            {/* Right: Color picker */}
+            <div className="lg:col-span-2 space-y-3">
+              <h3 className="text-xs text-zinc-500 uppercase tracking-widest font-medium">New Color</h3>
+              <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-xl p-5">
+                <ColorPicker
+                  selectedColor={selectedColorName}
+                  onColorChange={handleColorChange}
                 />
-                <span className="text-xs text-zinc-400 font-medium">
-                  {selectedColorName}
-                </span>
+              </div>
+
+              {/* CTA */}
+              <button
+                onClick={handleVisualize}
+                disabled={!uploadedImage || isLoading}
+                className="w-full bg-white hover:bg-zinc-100 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed text-zinc-900 font-semibold text-sm py-3.5 rounded-xl transition-all duration-200 active:scale-[0.98]"
+              >
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="w-3.5 h-3.5 border-2 border-zinc-400 border-t-zinc-700 rounded-full animate-spin" />
+                    Processing
+                  </span>
+                ) : (
+                  "Visualize"
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Loading state */}
+          {isLoading && (
+            <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-xl overflow-hidden mb-8">
+              <LoadingSpinner />
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="bg-red-950/20 border border-red-900/30 rounded-xl p-4 mb-8 flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-red-400 text-xs">!</span>
+              </div>
+              <div>
+                <p className="text-red-300 text-sm font-medium">Generation failed</p>
+                <p className="text-red-400/70 text-xs mt-1">{error}</p>
               </div>
             </div>
+          )}
+        </main>
 
-            <ColorPicker
-              selectedColor={selectedColorName}
-              onColorChange={handleColorChange}
-            />
+        {/* Footer */}
+        <footer className="border-t border-zinc-800/40 py-6">
+          <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+            <p className="text-zinc-700 text-xs">ColorShift</p>
+            <p className="text-zinc-800 text-xs">AI-Powered Color Visualization</p>
           </div>
-        </div>
+        </footer>
+      </div>
 
-        {/* Visualize button */}
-        <div className="flex justify-center">
-          <button
-            onClick={handleVisualize}
-            disabled={!uploadedImage || isLoading}
-            className="bg-zinc-100 hover:bg-white disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed text-zinc-900 font-semibold text-base px-12 py-4 rounded-xl transition-all duration-200 shadow-2xl shadow-black/40 hover:shadow-black/60 active:scale-95 tracking-wide min-w-[220px]"
-          >
-            {isLoading ? (
-              <span className="flex items-center justify-center gap-3">
-                <div className="w-4 h-4 border-2 border-zinc-400 border-t-zinc-700 rounded-full animate-spin" />
-                Processing...
-              </span>
-            ) : (
-              "Visualize Color"
-            )}
-          </button>
-        </div>
-
-        {/* Loading */}
-        {isLoading && (
-          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden">
-            <LoadingSpinner />
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div className="bg-red-950/40 border border-red-900/60 rounded-xl p-5 flex items-start gap-3">
-            <svg
-              className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div>
-              <p className="font-semibold text-red-300 text-sm">
-                Generation failed
-              </p>
-              <p className="text-red-400 text-sm mt-1">{error}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Result Modal */}
-        {result && uploadedImage && (
-          <ResultModal
-            isOpen={true}
-            onClose={() => {
-              setResult(null);
-              setShareUrl(null);
-            }}
-            originalImage={uploadedImage}
-            resultImage={result.resultImage}
-            colorName={selectedColorName}
-            resultId={result.resultId}
-            onShare={handleShare}
-            onDownload={handleDownload}
-            shareUrl={shareUrl}
-            copied={copied}
-          />
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-zinc-800/60 mt-20 py-8 text-center text-zinc-600 text-xs tracking-widest uppercase">
-        <p>Car Color Visualizer</p>
-      </footer>
+      {/* Result Modal */}
+      {result && uploadedImage && (
+        <ResultModal
+          isOpen={true}
+          onClose={() => {
+            setResult(null);
+            setShareUrl(null);
+          }}
+          originalImage={uploadedImage}
+          resultImage={result.resultImage}
+          colorName={selectedColorName}
+          resultId={result.resultId}
+          onShare={handleShare}
+          onDownload={handleDownload}
+          shareUrl={shareUrl}
+          copied={copied}
+        />
+      )}
     </div>
   );
 }

@@ -43,14 +43,14 @@ export default function ImageUploader({
 
   return (
     <div
-      className={`relative border-2 border-dashed rounded-2xl transition-all duration-200 overflow-hidden ${
+      className={`relative rounded-xl transition-all duration-300 overflow-hidden ${
         isDragging
-          ? "border-blue-500 bg-blue-50"
+          ? "ring-2 ring-blue-500/50 bg-blue-500/5"
           : currentImage
-          ? "border-transparent"
-          : "border-gray-300 hover:border-gray-400 bg-gray-50 hover:bg-gray-100"
+          ? "bg-transparent"
+          : "bg-zinc-800/50 hover:bg-zinc-800/80 border border-dashed border-zinc-700 hover:border-zinc-500"
       }`}
-      style={{ minHeight: "280px" }}
+      style={{ minHeight: "300px" }}
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -64,11 +64,11 @@ export default function ImageUploader({
           <img
             src={currentImage}
             alt="Uploaded car"
-            className="w-full h-full object-contain rounded-2xl"
+            className="w-full h-full object-contain rounded-xl"
             style={{ maxHeight: "400px" }}
           />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 rounded-2xl flex items-center justify-center">
-            <label className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer bg-white text-gray-800 px-4 py-2 rounded-full font-medium text-sm shadow-lg">
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 rounded-xl flex items-center justify-center">
+            <label className="opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer bg-white/10 backdrop-blur-md text-white px-5 py-2.5 rounded-lg font-medium text-sm border border-white/20 hover:bg-white/20">
               Change Photo
               <input
                 type="file"
@@ -81,29 +81,25 @@ export default function ImageUploader({
         </div>
       ) : (
         <label className="flex flex-col items-center justify-center h-full cursor-pointer p-10">
-          <div className="w-16 h-16 bg-gray-200 rounded-2xl flex items-center justify-center mb-4">
+          <div className="w-14 h-14 rounded-full bg-zinc-700/50 flex items-center justify-center mb-5">
             <svg
-              className="w-8 h-8 text-gray-400"
+              className="w-6 h-6 text-zinc-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              strokeWidth={1.5}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
           </div>
-          <p className="text-gray-700 font-semibold text-lg mb-1">
+          <p className="text-zinc-300 font-medium text-sm mb-1">
             Drop your car photo here
           </p>
-          <p className="text-gray-400 text-sm mb-4">
-            or click to browse files
+          <p className="text-zinc-600 text-xs mb-5">
+            JPG, PNG up to 10MB
           </p>
-          <span className="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors">
-            Choose Photo
+          <span className="text-xs text-zinc-400 border border-zinc-700 px-4 py-2 rounded-lg hover:border-zinc-500 hover:text-zinc-300 transition-colors">
+            Browse Files
           </span>
           <input
             type="file"

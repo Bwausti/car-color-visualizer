@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 
 const LOADING_MESSAGES = [
-  "Analyzing your vehicle...",
-  "Applying paint color...",
+  "Analyzing vehicle geometry...",
+  "Mapping paint surfaces...",
+  "Applying color coat...",
   "Blending metallic finish...",
-  "Adjusting light reflections...",
-  "Finalizing your custom color...",
+  "Rendering reflections...",
+  "Final polish...",
 ];
 
 export default function LoadingSpinner() {
@@ -17,14 +18,14 @@ export default function LoadingSpinner() {
   useEffect(() => {
     const msgInterval = setInterval(() => {
       setMessageIndex((i) => (i + 1) % LOADING_MESSAGES.length);
-    }, 2500);
+    }, 2200);
 
     const progressInterval = setInterval(() => {
       setProgress((p) => {
-        if (p >= 95) return p;
-        return p + Math.random() * 3;
+        if (p >= 92) return p;
+        return p + Math.random() * 2.5;
       });
-    }, 800);
+    }, 600);
 
     return () => {
       clearInterval(msgInterval);
@@ -33,44 +34,43 @@ export default function LoadingSpinner() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-8">
-      <div className="relative w-20 h-20 mb-6">
-        <div className="absolute inset-0 rounded-full border-4 border-blue-100" />
-        <div
-          className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"
-          style={{ animationDuration: "1s" }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            className="w-8 h-8 text-blue-500"
+    <div className="flex flex-col items-center justify-center py-14 px-8">
+      {/* Animated ring */}
+      <div className="relative w-16 h-16 mb-6">
+        <svg className="w-full h-full animate-spin" style={{ animationDuration: "2s" }} viewBox="0 0 50 50">
+          <circle
+            cx="25" cy="25" r="20"
             fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-            />
-          </svg>
-        </div>
+            stroke="rgb(39,39,42)"
+            strokeWidth="3"
+          />
+          <circle
+            cx="25" cy="25" r="20"
+            fill="none"
+            stroke="rgb(161,161,170)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeDasharray="60 70"
+          />
+        </svg>
       </div>
 
-      <p className="text-gray-700 font-semibold text-lg mb-2">
-        AI Recoloring in Progress
-      </p>
-      <p className="text-gray-400 text-sm mb-6 text-center">
+      <p className="text-zinc-300 font-medium text-sm mb-1 tracking-wide">
         {LOADING_MESSAGES[messageIndex]}
       </p>
 
-      <div className="w-full max-w-xs bg-gray-100 rounded-full h-1.5 overflow-hidden">
-        <div
-          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-700"
-          style={{ width: `${progress}%` }}
-        />
+      {/* Progress bar */}
+      <div className="w-48 mt-4">
+        <div className="w-full bg-zinc-800 rounded-full h-0.5 overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-zinc-500 to-zinc-300 rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="text-zinc-600 text-[10px] mt-2 text-center font-mono">
+          {Math.round(progress)}%
+        </p>
       </div>
-      <p className="text-gray-400 text-xs mt-2">{Math.round(progress)}%</p>
     </div>
   );
 }
