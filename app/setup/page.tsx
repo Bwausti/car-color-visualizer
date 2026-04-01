@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const EMBED_BASE = "https://car-color-visualizer.vercel.app";
+const EMBED_BASE = "https://customcarapp.com";
 
 export default function SetupPage() {
   const [logoUrl, setLogoUrl] = useState("");
