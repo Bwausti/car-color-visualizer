@@ -4,7 +4,6 @@ import { useState } from "react";
 import ImageUploader from "@/components/ImageUploader";
 import ColorPicker from "@/components/ColorPicker";
 import ResultModal from "@/components/ResultModal";
-import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface VisualizeResult {
   resultImage: string;
@@ -167,13 +166,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Loading state */}
-          {isLoading && (
-            <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-xl overflow-hidden mb-8">
-              <LoadingSpinner />
-            </div>
-          )}
-
           {/* Error */}
           {error && (
             <div className="bg-red-950/20 border border-red-900/30 rounded-xl p-4 mb-8 flex items-start gap-3">
@@ -197,8 +189,8 @@ export default function Home() {
         </footer>
       </div>
 
-      {/* Result Modal */}
-      {result && uploadedImage && (
+      {/* Result Modal — shows during loading AND after result */}
+      {(isLoading || result) && uploadedImage && (
         <ResultModal
           isOpen={true}
           onClose={() => {
@@ -206,13 +198,14 @@ export default function Home() {
             setShareUrl(null);
           }}
           originalImage={uploadedImage}
-          resultImage={result.resultImage}
+          resultImage={result?.resultImage ?? null}
           colorName={selectedColorName}
-          resultId={result.resultId}
+          resultId={result?.resultId ?? ""}
           onShare={handleShare}
           onDownload={handleDownload}
           shareUrl={shareUrl}
           copied={copied}
+          isLoading={isLoading}
         />
       )}
     </div>
