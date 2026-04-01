@@ -96,14 +96,31 @@ export async function POST(req: NextRequest) {
 
     // Report usage to Stripe meter (fire-and-forget)
     try {
-      const { getStripe, METER_EVENT_NAME } = await import("@/lib/stripe");
-      await getStripe().billing.meterEvents.create({
-        event_name: METER_EVENT_NAME,
-        payload: {
-          value: "1",
-          stripe_customer_id: "default", // TODO: resolve from API key / client ID
-        },
-      });
+      const { getStripe, METER_EVENT_NAME, PRODUCT_ID } = await import("@/lib/stripe");
+      const stripe = getStripe();
+
+      // Find the first active subscriber to bill usage against
+      const subs = await stripe.subscriptions.list({ status: "active", limit: 10 });
+      const activeSub = subs.data.find((s) =>
+        s.items.data.some((item) => item.price.product === PRODUCT_ID)
+      );
+
+      if (activeSub) {
+        const customerId = typeof activeSub.customer === "string"
+          ? activeSub.customer
+          : activeSub.customer.id;
+
+        await stripe.billing.meterEvents.create({
+          event_name: METER_EVENT_NAME,
+          payload: {
+            value: "1",
+            stripe_customer_id: customerId,
+          },
+        });
+        console.log(`[Usage] Reported 1 visualization for customer ${customerId}`);
+      } else {
+        console.warn("[Usage] No active subscriber found — visualization not billed");
+      }
     } catch (meterErr) {
       console.warn("Stripe meter report failed (non-blocking):", meterErr);
     }
