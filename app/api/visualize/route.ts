@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const prompt = `Change only the exterior paint color of this vehicle to ${targetColor}. Keep absolutely everything else exactly the same — same car model, same angle, same background scenery, same wheels and tires, same trim, same glass, same interior, same lighting, same shadows, same reflections. Only the body paint color should change to ${targetColor}. Do not alter the composition, perspective, or any other element of the image.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-3-pro-image-preview",
       contents: [
         {
           parts: [

@@ -90,64 +90,64 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <header className="border-b border-zinc-800/60 sticky top-0 z-10 bg-zinc-950/90 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
-              <svg
-                className="w-5 h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-                />
-              </svg>
-            </div>
+            {/* Minimal car silhouette icon */}
+            <svg
+              className="w-7 h-7 text-zinc-300"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
+            </svg>
             <div>
-              <h1 className="font-bold text-gray-900 text-base leading-tight">
+              <h1 className="font-semibold text-zinc-100 text-sm tracking-wide">
                 Car Color Visualizer
               </h1>
-              <p className="text-xs text-gray-400">Powered by Google Imagen AI</p>
+              <p className="text-[10px] text-zinc-500 tracking-widest uppercase">
+                Powered by Google AI
+              </p>
             </div>
           </div>
           <a
             href="/embed"
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors tracking-wide"
           >
-            Embed →
+            Embed
           </a>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+      <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
         {/* Hero */}
-        <div className="text-center py-6">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3">
+        <div className="text-center py-8">
+          <p className="text-xs text-zinc-500 uppercase tracking-[0.3em] mb-4 font-medium">
+            AI Color Studio
+          </p>
+          <h2 className="text-5xl sm:text-6xl font-bold text-zinc-100 mb-4 tracking-tight">
             See Your Car in{" "}
-            <span className="text-blue-600">Any Color</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-300 to-zinc-500">
+              Any Color
+            </span>
           </h2>
-          <p className="text-gray-500 text-lg max-w-xl mx-auto">
-            Upload a photo, pick a color, and watch AI transform your vehicle's
-            paint — instantly.
+          <p className="text-zinc-500 text-lg max-w-xl mx-auto leading-relaxed">
+            Upload a photo. Choose a color. AI handles the rest.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Left: Upload */}
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 space-y-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-7 h-7 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">
-                1
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-6 space-y-4">
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-semibold">
+                Step 01
               </span>
-              <h3 className="font-semibold text-gray-800">Upload Car Photo</h3>
+              <div className="flex-1 h-px bg-zinc-800" />
             </div>
+            <h3 className="font-semibold text-zinc-200 text-base">Upload Car Photo</h3>
             <ImageUploader
               onImageSelect={handleImageSelect}
               currentImage={uploadedImage}
@@ -155,27 +155,24 @@ export default function Home() {
           </div>
 
           {/* Right: Color picker */}
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 space-y-4">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-7 h-7 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold">
-                2
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-6 space-y-4">
+            <div className="flex items-center gap-3 mb-1">
+              <span className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-semibold">
+                Step 02
               </span>
-              <h3 className="font-semibold text-gray-800">Choose a Color</h3>
+              <div className="flex-1 h-px bg-zinc-800" />
             </div>
-
-            {/* Selected color preview */}
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl">
-              <div
-                className="w-10 h-10 rounded-full shadow-md border-2 border-white"
-                style={{ backgroundColor: selectedColorHex }}
-              />
-              <div>
-                <p className="font-semibold text-gray-800 text-sm">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-zinc-200 text-base">Choose a Color</h3>
+              {/* Selected color preview inline */}
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-5 h-5 rounded-full shadow-md border border-white/10"
+                  style={{ backgroundColor: selectedColorHex }}
+                />
+                <span className="text-xs text-zinc-400 font-medium">
                   {selectedColorName}
-                </p>
-                <p className="text-xs text-gray-400 font-mono">
-                  {selectedColorHex}
-                </p>
+                </span>
               </div>
             </div>
 
@@ -191,46 +188,31 @@ export default function Home() {
           <button
             onClick={handleVisualize}
             disabled={!uploadedImage || isLoading}
-            className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold text-lg px-10 py-4 rounded-2xl transition-all duration-200 shadow-lg hover:shadow-blue-200 active:scale-95"
+            className="bg-zinc-100 hover:bg-white disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed text-zinc-900 font-semibold text-base px-12 py-4 rounded-xl transition-all duration-200 shadow-2xl shadow-black/40 hover:shadow-black/60 active:scale-95 tracking-wide min-w-[220px]"
           >
             {isLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="flex items-center justify-center gap-3">
+                <div className="w-4 h-4 border-2 border-zinc-400 border-t-zinc-700 rounded-full animate-spin" />
                 Processing...
-              </>
+              </span>
             ) : (
-              <>
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-                Visualize Color
-              </>
+              "Visualize Color"
             )}
           </button>
         </div>
 
         {/* Loading */}
         {isLoading && (
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden">
             <LoadingSpinner />
           </div>
         )}
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-5 flex items-start gap-3">
+          <div className="bg-red-950/40 border border-red-900/60 rounded-xl p-5 flex items-start gap-3">
             <svg
-              className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5"
+              className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -243,22 +225,22 @@ export default function Home() {
               />
             </svg>
             <div>
-              <p className="font-semibold text-red-700 text-sm">
+              <p className="font-semibold text-red-300 text-sm">
                 Generation failed
               </p>
-              <p className="text-red-600 text-sm mt-1">{error}</p>
+              <p className="text-red-400 text-sm mt-1">{error}</p>
             </div>
           </div>
         )}
 
         {/* Result */}
         {result && uploadedImage && (
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 space-y-5">
+          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-6 space-y-5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-7 h-7 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
                   <svg
-                    className="w-4 h-4"
+                    className="w-3 h-3 text-emerald-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -266,19 +248,19 @@ export default function Home() {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
+                      strokeWidth={2.5}
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                </span>
-                <h3 className="font-semibold text-gray-800">
-                  Your {selectedColorName} Vehicle
+                </div>
+                <h3 className="font-semibold text-zinc-200">
+                  {selectedColorName}
                 </h3>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={handleDownload}
-                  className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1.5"
+                  className="text-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1.5"
                 >
                   <svg
                     className="w-4 h-4"
@@ -297,7 +279,7 @@ export default function Home() {
                 </button>
                 <button
                   onClick={handleShare}
-                  className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1.5"
+                  className="text-sm bg-zinc-100 hover:bg-white text-zinc-900 px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1.5"
                 >
                   <svg
                     className="w-4 h-4"
@@ -319,9 +301,9 @@ export default function Home() {
 
             {/* Share URL display */}
             {shareUrl && (
-              <div className="bg-gray-50 rounded-xl p-3 flex items-center gap-2">
+              <div className="bg-zinc-800/60 rounded-xl p-3 flex items-center gap-2">
                 <svg
-                  className="w-4 h-4 text-gray-400 flex-shrink-0"
+                  className="w-4 h-4 text-zinc-500 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -333,22 +315,25 @@ export default function Home() {
                     d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
                   />
                 </svg>
-                <span className="text-sm text-gray-600 truncate font-mono flex-1">
+                <span className="text-sm text-zinc-400 truncate font-mono flex-1">
                   {shareUrl}
                 </span>
               </div>
             )}
 
-            <p className="text-xs text-gray-400 text-center">
+            <p className="text-xs text-zinc-600 text-center tracking-wide">
               Drag the slider to compare before and after
             </p>
 
-            <BeforeAfterSlider
-              beforeImage={uploadedImage}
-              afterImage={`data:image/jpeg;base64,${result.resultImage}`}
-              beforeLabel="Original"
-              afterLabel={selectedColorName}
-            />
+            {/* Larger image area */}
+            <div className="rounded-xl overflow-hidden">
+              <BeforeAfterSlider
+                beforeImage={uploadedImage}
+                afterImage={`data:image/jpeg;base64,${result.resultImage}`}
+                beforeLabel="Original"
+                afterLabel={selectedColorName}
+              />
+            </div>
 
             {/* Try another color */}
             <div className="text-center pt-2">
@@ -357,7 +342,7 @@ export default function Home() {
                   setResult(null);
                   setShareUrl(null);
                 }}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm text-zinc-500 hover:text-zinc-300 font-medium transition-colors tracking-wide"
               >
                 ← Try a different color
               </button>
@@ -367,8 +352,8 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 mt-16 py-8 text-center text-gray-400 text-sm">
-        <p>Car Color Visualizer • Powered by Google Imagen AI</p>
+      <footer className="border-t border-zinc-800/60 mt-20 py-8 text-center text-zinc-600 text-xs tracking-widest uppercase">
+        <p>Car Color Visualizer &nbsp;•&nbsp; Powered by Google AI</p>
       </footer>
     </div>
   );
