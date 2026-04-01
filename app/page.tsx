@@ -12,7 +12,7 @@ interface VisualizeResult {
 
 export default function Home() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [selectedColorName, setSelectedColorName] = useState("Custom #3b82f6");
+  const [selectedColorName, setSelectedColorName] = useState("#3b82f6");
   const [selectedColorHex, setSelectedColorHex] = useState("#3b82f6");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<VisualizeResult | null>(null);

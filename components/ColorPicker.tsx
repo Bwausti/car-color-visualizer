@@ -12,68 +12,100 @@ export default function ColorPicker({
   selectedColor,
   onColorChange,
 }: ColorPickerProps) {
-  const [customHex, setCustomHex] = useState("#3b82f6");
-  const [customName, setCustomName] = useState("");
-  const [isCustomActive, setIsCustomActive] = useState(true);
+  const [hex, setHex] = useState("#3b82f6");
+  const [hexInput, setHexInput] = useState("#3b82f6");
+  const [presetActive, setPresetActive] = useState(false);
 
-  const handleCustomColorChange = (hex: string) => {
-    setCustomHex(hex);
-    setIsCustomActive(true);
-    onColorChange(customName || `Custom ${hex}`, hex);
+  const applyHex = (newHex: string) => {
+    setHex(newHex);
+    setHexInput(newHex);
+    setPresetActive(false);
+    onColorChange(newHex, newHex);
   };
 
-  const handleCustomNameChange = (name: string) => {
-    setCustomName(name);
-    if (isCustomActive) {
-      onColorChange(name || `Custom ${customHex}`, customHex);
+  const handleHexInputChange = (val: string) => {
+    setHexInput(val);
+    // Auto-apply if valid hex
+    const clean = val.startsWith("#") ? val : `#${val}`;
+    if (/^#[0-9A-Fa-f]{6}$/.test(clean)) {
+      applyHex(clean);
     }
   };
 
   const handlePresetClick = (color: CarColor) => {
-    setIsCustomActive(false);
+    setHex(color.hex);
+    setHexInput(color.hex);
+    setPresetActive(true);
     onColorChange(color.name, color.hex);
   };
 
+  const handleEyedropper = async () => {
+    try {
+      // @ts-expect-error EyeDropper API not in all TS libs
+      const dropper = new EyeDropper();
+      const result = await dropper.open();
+      if (result?.sRGBHex) {
+        applyHex(result.sRGBHex);
+      }
+    } catch {
+      // user cancelled or unsupported
+    }
+  };
+
   return (
-    <div className="space-y-5">
-      {/* Custom color - always visible, prominent */}
-      <div className="flex items-center gap-4">
-        <div className="relative group">
+    <div className="space-y-4">
+      {/* Primary: Color picker + hex input */}
+      <div className="flex items-center gap-3">
+        {/* Color swatch (opens native picker) */}
+        <div className="relative flex-shrink-0">
           <div
-            className={`w-16 h-16 rounded-xl shadow-lg cursor-pointer transition-all duration-200 hover:scale-105 ${
-              isCustomActive ? "ring-2 ring-white/30 ring-offset-2 ring-offset-zinc-900" : ""
-            }`}
-            style={{ backgroundColor: customHex }}
+            className="w-12 h-12 rounded-xl shadow-lg cursor-pointer ring-2 ring-white/10 ring-offset-2 ring-offset-zinc-900 hover:ring-white/25 transition-all"
+            style={{ backgroundColor: hex }}
           >
             <input
               type="color"
-              value={customHex}
-              onChange={(e) => handleCustomColorChange(e.target.value)}
+              value={hex}
+              onChange={(e) => applyHex(e.target.value)}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
           </div>
         </div>
-        <div className="flex-1 min-w-0">
+
+        {/* Hex input */}
+        <div className="flex-1">
           <input
             type="text"
-            placeholder="Name this color..."
-            value={customName}
-            onChange={(e) => handleCustomNameChange(e.target.value)}
-            className="w-full bg-zinc-800/50 border border-zinc-700/50 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 transition-colors"
+            value={hexInput}
+            onChange={(e) => handleHexInputChange(e.target.value)}
+            placeholder="#000000"
+            spellCheck={false}
+            className="w-full bg-zinc-800/60 border border-zinc-700/50 rounded-lg px-3 py-2.5 text-sm text-zinc-100 font-mono placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 transition-colors"
           />
-          <p className="text-zinc-600 text-[10px] mt-1.5 font-mono">{customHex}</p>
         </div>
+
+        {/* Eyedropper button */}
+        <button
+          onClick={handleEyedropper}
+          title="Pick color from screen"
+          className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-800/60 border border-zinc-700/50 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-500 transition-colors"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+            <path d="m2 22 1-1h3l9-9" />
+            <path d="M3 21v-3l9-9" />
+            <path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3L15 6" />
+          </svg>
+        </button>
       </div>
 
       {/* Divider */}
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-zinc-800" />
-        <span className="text-[10px] text-zinc-600 uppercase tracking-widest">Presets</span>
+        <span className="text-[10px] text-zinc-600 uppercase tracking-widest">or pick a preset</span>
         <div className="flex-1 h-px bg-zinc-800" />
       </div>
 
-      {/* Preset colors - compact grid */}
-      <div className="grid grid-cols-6 gap-2">
+      {/* Preset colors — small dots */}
+      <div className="flex flex-wrap gap-2 justify-center">
         {CAR_COLORS.map((color: CarColor) => (
           <button
             key={color.name}
@@ -82,16 +114,13 @@ export default function ColorPicker({
             className="group relative"
           >
             <div
-              className={`w-full aspect-square rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-lg ${
-                selectedColor === color.name && !isCustomActive
+              className={`w-7 h-7 rounded-full transition-all duration-150 hover:scale-125 ${
+                selectedColor === color.name && presetActive
                   ? "ring-2 ring-white/40 ring-offset-1 ring-offset-zinc-900 scale-110"
-                  : "hover:ring-1 hover:ring-white/20"
+                  : ""
               }`}
               style={{ backgroundColor: color.hex }}
             />
-            <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px] text-zinc-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              {color.name}
-            </span>
           </button>
         ))}
       </div>
