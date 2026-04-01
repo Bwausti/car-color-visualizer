@@ -94,6 +94,20 @@ export async function POST(req: NextRequest) {
 
     saveResult(resultData);
 
+    // Report usage to Stripe meter (fire-and-forget)
+    try {
+      const { stripe, METER_EVENT_NAME } = await import("@/lib/stripe");
+      await stripe.billing.meterEvents.create({
+        event_name: METER_EVENT_NAME,
+        payload: {
+          value: "1",
+          stripe_customer_id: "default", // TODO: resolve from API key / client ID
+        },
+      });
+    } catch (meterErr) {
+      console.warn("Stripe meter report failed (non-blocking):", meterErr);
+    }
+
     return NextResponse.json({
       success: true,
       resultImage: resultImageBase64,
