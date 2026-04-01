@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from "path";
 
-const DATA_DIR = path.join(process.cwd(), "data", "results");
+// Vercel serverless has a read-only filesystem except /tmp
+const DATA_DIR = path.join("/tmp", "car-visualizer-results");
 
 export interface ResultData {
   id: string;

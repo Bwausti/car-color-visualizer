@@ -3,7 +3,7 @@
 import { useState } from "react";
 import ImageUploader from "@/components/ImageUploader";
 import ColorPicker from "@/components/ColorPicker";
-import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import ResultModal from "@/components/ResultModal";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface VisualizeResult {
@@ -233,121 +233,23 @@ export default function Home() {
           </div>
         )}
 
-        {/* Result */}
+        {/* Result Modal */}
         {result && uploadedImage && (
-          <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-6 space-y-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                  <svg
-                    className="w-3 h-3 text-emerald-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <h3 className="font-semibold text-zinc-200">
-                  {selectedColorName}
-                </h3>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleDownload}
-                  className="text-sm bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1.5"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  Download
-                </button>
-                <button
-                  onClick={handleShare}
-                  className="text-sm bg-zinc-100 hover:bg-white text-zinc-900 px-3 py-1.5 rounded-lg transition-colors font-medium flex items-center gap-1.5"
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                    />
-                  </svg>
-                  {copied ? "Copied!" : "Share"}
-                </button>
-              </div>
-            </div>
-
-            {/* Share URL display */}
-            {shareUrl && (
-              <div className="bg-zinc-800/60 rounded-xl p-3 flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-zinc-500 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                  />
-                </svg>
-                <span className="text-sm text-zinc-400 truncate font-mono flex-1">
-                  {shareUrl}
-                </span>
-              </div>
-            )}
-
-            <p className="text-xs text-zinc-600 text-center tracking-wide">
-              Drag the slider to compare before and after
-            </p>
-
-            {/* Larger image area */}
-            <div className="rounded-xl overflow-hidden">
-              <BeforeAfterSlider
-                beforeImage={uploadedImage}
-                afterImage={`data:image/jpeg;base64,${result.resultImage}`}
-                beforeLabel="Original"
-                afterLabel={selectedColorName}
-              />
-            </div>
-
-            {/* Try another color */}
-            <div className="text-center pt-2">
-              <button
-                onClick={() => {
-                  setResult(null);
-                  setShareUrl(null);
-                }}
-                className="text-sm text-zinc-500 hover:text-zinc-300 font-medium transition-colors tracking-wide"
-              >
-                ← Try a different color
-              </button>
-            </div>
-          </div>
+          <ResultModal
+            isOpen={true}
+            onClose={() => {
+              setResult(null);
+              setShareUrl(null);
+            }}
+            originalImage={uploadedImage}
+            resultImage={result.resultImage}
+            colorName={selectedColorName}
+            resultId={result.resultId}
+            onShare={handleShare}
+            onDownload={handleDownload}
+            shareUrl={shareUrl}
+            copied={copied}
+          />
         )}
       </main>
 
