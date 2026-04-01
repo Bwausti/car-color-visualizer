@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe, PRODUCT_ID } from "@/lib/stripe";
+import { getStripe, PRODUCT_ID } from "@/lib/stripe";
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "colorshift2026";
 
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Get all subscriptions for this product
-    const subscriptions = await stripe.subscriptions.list({
+    const subscriptions = await getStripe().subscriptions.list({
       status: "all",
       limit: 100,
       expand: ["data.customer"],
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
         try {
           const now = Math.floor(Date.now() / 1000);
           const thirtyDaysAgo = now - 30 * 24 * 60 * 60;
-          const summary = await stripe.billing.meters.listEventSummaries(
+          const summary = await getStripe().billing.meters.listEventSummaries(
             "mtr_61UQruw7irc0Ut5PW41EJAWe8oXZ1Qd6",
             {
               customer: customer.id,

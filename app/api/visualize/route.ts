@@ -96,8 +96,8 @@ export async function POST(req: NextRequest) {
 
     // Report usage to Stripe meter (fire-and-forget)
     try {
-      const { stripe, METER_EVENT_NAME } = await import("@/lib/stripe");
-      await stripe.billing.meterEvents.create({
+      const { getStripe, METER_EVENT_NAME } = await import("@/lib/stripe");
+      await getStripe().billing.meterEvents.create({
         event_name: METER_EVENT_NAME,
         payload: {
           value: "1",

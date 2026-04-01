@@ -1,20 +1,8 @@
 import Stripe from "stripe";
 
-let _stripe: Stripe | null = null;
-
 export function getStripe(): Stripe {
-  if (!_stripe) {
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-  }
-  return _stripe;
+  return new Stripe(process.env.STRIPE_SECRET_KEY!);
 }
-
-// Re-export as getter for convenience
-export const stripe = new Proxy({} as Stripe, {
-  get(_, prop) {
-    return (getStripe() as unknown as Record<string | symbol, unknown>)[prop];
-  },
-});
 
 // Stripe IDs
 export const PRODUCT_ID = "prod_UFzxsbGeXp2CWA";
