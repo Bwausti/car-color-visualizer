@@ -138,32 +138,31 @@ export default function Home() {
               />
             </div>
 
-            {/* Right: Color picker */}
-            <div className="lg:col-span-2 space-y-3">
-              <h3 className="text-xs text-zinc-500 uppercase tracking-widest font-medium">New Color</h3>
-              <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-xl p-5">
-                <ColorPicker
-                  selectedColor={selectedColorName}
-                  onColorChange={handleColorChange}
-                />
-              </div>
+            {/* Right: Color picker — only appears after upload */}
+            {uploadedImage ? (
+              <div className="lg:col-span-2 space-y-3">
+                <h3 className="text-xs text-zinc-500 uppercase tracking-widest font-medium">Select color via hex code or eyedropper</h3>
+                <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-xl p-5">
+                  <ColorPicker
+                    selectedColor={selectedColorName}
+                    onColorChange={handleColorChange}
+                  />
+                </div>
 
-              {/* CTA */}
-              <button
-                onClick={handleVisualize}
-                disabled={!uploadedImage || isLoading}
-                className="w-full bg-white hover:bg-zinc-100 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed text-zinc-900 font-semibold text-sm py-3.5 rounded-xl transition-all duration-200 active:scale-[0.98]"
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <div className="w-3.5 h-3.5 border-2 border-zinc-400 border-t-zinc-700 rounded-full animate-spin" />
-                    Processing
-                  </span>
-                ) : (
-                  "Visualize"
-                )}
-              </button>
-            </div>
+                {/* CTA */}
+                <button
+                  onClick={handleVisualize}
+                  disabled={isLoading}
+                  className="w-full bg-white hover:bg-zinc-100 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed text-zinc-900 font-semibold text-sm py-3.5 rounded-xl transition-all duration-200 active:scale-[0.98]"
+                >
+                  Visualize
+                </button>
+              </div>
+            ) : (
+              <div className="lg:col-span-2 flex items-center justify-center">
+                <p className="text-zinc-700 text-sm">Upload a photo to get started</p>
+              </div>
+            )}
           </div>
 
           {/* Error */}

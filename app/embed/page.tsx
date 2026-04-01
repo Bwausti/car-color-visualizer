@@ -2,6 +2,8 @@
 
 import { useState, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const PRESETS = [
   { name: "Midnight Black", hex: "#0a0a0a" },
@@ -18,27 +20,17 @@ const PRESETS = [
   { name: "BRG", hex: "#004225" },
 ];
 
-const STEPS = [
-  "Analyzing vehicle...",
-  "Mapping paint surfaces...",
-  "Applying color...",
-  "Blending finish...",
-  "Rendering...",
-];
-
 function EmbedContent() {
   const searchParams = useSearchParams();
   const logoUrl = searchParams.get("logo");
 
   const [image, setImage] = useState<string | null>(null);
-  const [colorName, setColorName] = useState("Custom");
   const [colorHex, setColorHex] = useState("#3b82f6");
+  const [hexInput, setHexInput] = useState("#3b82f6");
+  const [presetName, setPresetName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [loadStep, setLoadStep] = useState(0);
-  const [result, setResult] = useState<{ img: string; id: string } | null>(null);
+  const [result, setResult] = useState<{ img: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [sliderPos, setSliderPos] = useState(50);
-  const [dragging, setDragging] = useState(false);
 
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) return;
@@ -51,111 +43,109 @@ function EmbedContent() {
     r.readAsDataURL(file);
   }, []);
 
+  const applyHex = (hex: string) => {
+    setColorHex(hex);
+    setHexInput(hex);
+    setPresetName(null);
+  };
+
+  const handleHexInput = (val: string) => {
+    setHexInput(val);
+    const clean = val.startsWith("#") ? val : `#${val}`;
+    if (/^#[0-9A-Fa-f]{6}$/.test(clean)) {
+      setColorHex(clean);
+      setPresetName(null);
+    }
+  };
+
+  const handlePreset = (name: string, hex: string) => {
+    setColorHex(hex);
+    setHexInput(hex);
+    setPresetName(name);
+  };
+
+  const handleEyedropper = async () => {
+    try {
+      // @ts-expect-error EyeDropper API
+      const dropper = new EyeDropper();
+      const result = await dropper.open();
+      if (result?.sRGBHex) applyHex(result.sRGBHex);
+    } catch { /* cancelled or unsupported */ }
+  };
+
+  const colorLabel = presetName || colorHex;
+
   const visualize = async () => {
     if (!image) return;
     setLoading(true);
     setError(null);
     setResult(null);
-    setLoadStep(0);
-
-    const stepTimer = setInterval(() => {
-      setLoadStep((s) => (s + 1) % STEPS.length);
-    }, 2000);
 
     try {
       const res = await fetch("/api/visualize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image, targetColor: colorName }),
+        body: JSON.stringify({ image, targetColor: colorLabel }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
-      setResult({ img: data.resultImage, id: data.resultId });
+      setResult({ img: data.resultImage });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error");
     } finally {
-      clearInterval(stepTimer);
       setLoading(false);
     }
   };
 
-  const updateSlider = useCallback((clientX: number, el: HTMLDivElement) => {
-    const rect = el.getBoundingClientRect();
-    setSliderPos(Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 0), 100));
-  }, []);
+  const handleDownload = () => {
+    if (!result) return;
+    const link = document.createElement("a");
+    link.href = `data:image/jpeg;base64,${result.img}`;
+    link.download = `car-${colorLabel.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.jpg`;
+    link.click();
+  };
 
-  // Result view with before/after
+  // ─── Result view ───
   if (result && image) {
-    const beforeSrc = image.startsWith("data:") ? image : `data:image/jpeg;base64,${image}`;
-    const afterSrc = `data:image/jpeg;base64,${result.img}`;
-
     return (
       <div className="h-screen bg-zinc-950 flex flex-col">
-        {/* Compact slider */}
-        <div
-          className="flex-1 relative select-none cursor-col-resize overflow-hidden"
-          onMouseDown={(e) => { setDragging(true); updateSlider(e.clientX, e.currentTarget as HTMLDivElement); }}
-          onMouseMove={(e) => { if (dragging) updateSlider(e.clientX, e.currentTarget as HTMLDivElement); }}
-          onMouseUp={() => setDragging(false)}
-          onMouseLeave={() => setDragging(false)}
-          onTouchMove={(e) => updateSlider(e.touches[0].clientX, e.currentTarget as HTMLDivElement)}
-          style={{ touchAction: "none" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={afterSrc} alt="After" className="w-full h-full object-contain" draggable={false} />
-          <div className="absolute inset-0 overflow-hidden" style={{ width: `${sliderPos}%` }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={beforeSrc} alt="Before" className="h-full object-contain" style={{ width: "100vw", maxWidth: "none" }} draggable={false} />
-          </div>
-          <div className="absolute top-0 bottom-0 w-px bg-white/60" style={{ left: `${sliderPos}%` }}>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l-4 3 4 3M16 9l4 3-4 3" />
-              </svg>
-            </div>
-          </div>
-          <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full">Original</div>
-          <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full">{colorName}</div>
+        <div className="flex-1 overflow-hidden p-3">
+          <BeforeAfterSlider
+            beforeImage={image}
+            afterImage={`data:image/jpeg;base64,${result.img}`}
+            beforeLabel="Original"
+            afterLabel={colorLabel}
+          />
         </div>
-
-        {/* Bottom bar */}
         <div className="flex items-center gap-2 p-3 border-t border-zinc-800/60 bg-zinc-900/50">
           <button
-            onClick={() => { setResult(null); }}
+            onClick={() => setResult(null)}
             className="text-xs text-zinc-400 hover:text-white px-3 py-2 rounded-lg hover:bg-zinc-800 transition-colors"
           >
             ← New Color
           </button>
           <div className="flex-1" />
-          <a
-            href={`/result/${result.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={handleDownload}
             className="text-xs bg-white text-zinc-900 px-4 py-2 rounded-lg font-medium hover:bg-zinc-200 transition-colors"
           >
-            Share
-          </a>
+            Download
+          </button>
         </div>
       </div>
     );
   }
 
-  // Loading view
+  // ─── Loading view ───
   if (loading) {
     return (
-      <div className="h-screen bg-zinc-950 flex flex-col items-center justify-center">
-        <div className="relative w-12 h-12 mb-4">
-          <svg className="w-full h-full animate-spin" style={{ animationDuration: "2s" }} viewBox="0 0 50 50">
-            <circle cx="25" cy="25" r="20" fill="none" stroke="rgb(39,39,42)" strokeWidth="3" />
-            <circle cx="25" cy="25" r="20" fill="none" stroke="rgb(161,161,170)" strokeWidth="3" strokeLinecap="round" strokeDasharray="60 70" />
-          </svg>
-        </div>
-        <p className="text-zinc-400 text-sm">{STEPS[loadStep]}</p>
+      <div className="h-screen bg-zinc-950 flex items-center justify-center">
+        <LoadingSpinner />
       </div>
     );
   }
 
-  // Upload + color select view
+  // ─── Upload + color select ───
   return (
     <div className="h-screen bg-zinc-950 flex flex-col overflow-auto">
       {/* Header */}
@@ -203,58 +193,86 @@ function EmbedContent() {
           )}
         </div>
 
-        {/* Color selection — compact */}
-        <div className="space-y-3">
-          {/* Custom picker */}
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0" style={{ backgroundColor: colorHex }}>
+        {/* Color selection — only shows after image uploaded */}
+        {image && (
+          <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+            <p className="text-xs text-zinc-500 uppercase tracking-widest font-medium">Select color via hex code or eyedropper</p>
+
+            {/* Hex + eyedropper */}
+            <div className="flex items-center gap-3">
+              <div className="relative flex-shrink-0">
+                <div
+                  className="w-10 h-10 rounded-lg cursor-pointer ring-1 ring-white/10 hover:ring-white/25 transition-all"
+                  style={{ backgroundColor: colorHex }}
+                >
+                  <input
+                    type="color"
+                    value={colorHex}
+                    onChange={(e) => applyHex(e.target.value)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+              </div>
+
               <input
-                type="color"
-                value={colorHex}
-                onChange={(e) => { setColorHex(e.target.value); setColorName(`Custom ${e.target.value}`); }}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                type="text"
+                value={hexInput}
+                onChange={(e) => handleHexInput(e.target.value)}
+                placeholder="#000000"
+                spellCheck={false}
+                className="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-100 font-mono placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600"
               />
-            </div>
-            <input
-              type="text"
-              value={colorName.startsWith("Custom") ? "" : colorName}
-              placeholder="Color name..."
-              onChange={(e) => setColorName(e.target.value || `Custom ${colorHex}`)}
-              className="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-600"
-            />
-          </div>
 
-          {/* Presets — small dots */}
-          <div className="flex flex-wrap gap-1.5">
-            {PRESETS.map((c) => (
               <button
-                key={c.name}
-                title={c.name}
-                onClick={() => { setColorName(c.name); setColorHex(c.hex); }}
-                className={`w-6 h-6 rounded-full transition-all hover:scale-125 ${
-                  colorName === c.name ? "ring-2 ring-white/40 ring-offset-1 ring-offset-zinc-950" : ""
-                }`}
-                style={{ backgroundColor: c.hex }}
-              />
-            ))}
+                onClick={handleEyedropper}
+                title="Pick from screen"
+                className="flex-shrink-0 w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-600 transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m2 22 1-1h3l9-9" />
+                  <path d="M3 21v-3l9-9" />
+                  <path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3L15 6" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Presets */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-zinc-800" />
+              <span className="text-[10px] text-zinc-700 uppercase tracking-widest">or preset</span>
+              <div className="flex-1 h-px bg-zinc-800" />
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 justify-center">
+              {PRESETS.map((c) => (
+                <button
+                  key={c.name}
+                  title={c.name}
+                  onClick={() => handlePreset(c.name, c.hex)}
+                  className={`w-6 h-6 rounded-full transition-all hover:scale-125 ${
+                    presetName === c.name ? "ring-2 ring-white/40 ring-offset-1 ring-offset-zinc-950" : ""
+                  }`}
+                  style={{ backgroundColor: c.hex }}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-
-        {error && (
-          <p className="text-red-400 text-xs">{error}</p>
         )}
+
+        {error && <p className="text-red-400 text-xs">{error}</p>}
       </div>
 
-      {/* Sticky CTA */}
-      <div className="p-4 border-t border-zinc-800/40 flex-shrink-0">
-        <button
-          onClick={visualize}
-          disabled={!image}
-          className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-zinc-900 hover:bg-zinc-100 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed transition-colors"
-        >
-          Visualize
-        </button>
-      </div>
+      {/* Sticky CTA — only when image is uploaded */}
+      {image && (
+        <div className="p-4 border-t border-zinc-800/40 flex-shrink-0">
+          <button
+            onClick={visualize}
+            className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-zinc-900 hover:bg-zinc-100 transition-colors active:scale-[0.98]"
+          >
+            Visualize
+          </button>
+        </div>
+      )}
     </div>
   );
 }
